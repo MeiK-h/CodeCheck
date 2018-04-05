@@ -1,0 +1,53 @@
+{% extends 'Checker/header.html' %}
+{% block body %}
+    <div id="content">
+        <form method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-lg-4 col-lg-offset-4 col-md-6 col-md-offset-2 col-xs-12 col-xs-offset-0">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h4><span class="glyphicon glyphicon-pencil"></span>&nbsp;登录
+                            </h4>
+                        </div>
+                        <div class="panel-body">
+                            <div id="alert-area">
+                            </div>
+                            <div class="form-group has-feedback col-sm-12">
+                                <div class="input-group">
+                                    <div class="input-group-addon">账号</div>
+                                    <input type="text" name="username" required="" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group has-feedback col-sm-12">
+                                <div class="input-group">
+                                    <div class="input-group-addon">密码</div>
+                                    <input type="password" name="password" required="" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-12">
+                                    <button style="width: 100%;" type="submit" class="btn btn-info ">登录
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="data-area" style="margin-bottom: 50px;">
+                    </div>
+                    {% if form.errors %}
+                        <div class="panel panel-danger">
+                            <div class="panel-heading">
+                                <h4><span class="glyphicon glyphicon-flash"></span>&nbsp;错误！</h4>
+                            </div>
+                            <div class="panel-body">
+                                {{ form.errors }}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

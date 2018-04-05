@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="cn-zh">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %} 代码查重 {% endblock %} - by MeiK</title>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
+
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+<body>
+<style>
+    .mix {
+        padding: 0;
+        z-index: 1;
+    }
+
+    .mix, .mix > #bg {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+    }
+
+    .mix > #content {
+        width: 100%;
+        text-align: center;
+        position: absolute;
+        z-index: 2;
+        top: 48%;
+        -webkit-transform: translateY(-50%);
+        -moz-transform: translateY(-50%);
+        -ms-transform: translateY(-50%);
+        transform: translateY(-50%);
+    }
+</style>
+{% block body_top %}
+{% endblock %}
+<div class="container" style="width: 100%; height: 100%;">
+    <div class="row-fluid">
+        <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse"
+                            data-target="#yp-navbar-collapse">
+                        <span class="sr-only">Navbar</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/">
+                        <span class="icon iconfont">Checker</span></a>
+                </div>
+                <div class="collapse navbar-collapse" id="yp-navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="{% url 'Checker:check_list' %}">我的查重</a></li>
+                        <li><a href="{% url 'Checker:create_check' %}">新建查重</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        {% if user.is_authenticated %}
+                            {% if user.is_superuser %}
+                                <li><a href="/root_site" target="_blank"><span
+                                        class="glyphicon glyphicon-user"></span> {{ user.username }}
+                                </a>
+                                    {% else %}
+                                <li><a href="/"><span class="glyphicon glyphicon-user"></span> {{ user.username }}</a>
+                            {% endif %}
+                        </li>
+                            <li><a href="{% url 'Checker:logout' %}"><span class="glyphicon glyphicon-log-out"></span>
+                                退出</a>
+                            </li>
+                        {% else %}
+                            <li><a href="{% url 'Checker:login' %}"><span class="glyphicon glyphicon-log-in"></span>
+                                登录</a>
+                            </li>
+                            <li><a href="{% url 'Checker:register' %}"><span class="glyphicon glyphicon-user"></span> 注册</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div style="height: 50px;"></div>
+        <div class="mix">
+            {% block body %}
+            {% endblock %}
+        </div>
+    </div>
+</div>
+</body>
+</html>

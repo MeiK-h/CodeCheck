@@ -12,9 +12,13 @@ class Bark(models.Model):
         return self.title
 
 
+def directory_path(instance, filename):
+    return 'check_{0}/{1}'.format(instance.bark.id, filename)
+
+
 class Code(models.Model):
     bark = models.ForeignKey(Bark, on_delete=models.CASCADE)
-    code = models.FileField(upload_to='code/')
+    code = models.FileField(upload_to=directory_path)
     c_time = models.DateTimeField(auto_now_add=True)
     u_time = models.DateTimeField(auto_now=True)
 

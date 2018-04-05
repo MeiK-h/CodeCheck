@@ -1,11 +1,20 @@
 # coding=utf-8
-from celery import Celery
+from __future__ import absolute_import, unicode_literals
+
+import os
 import time
 
-app = Celery('tasks', backend='redis://localhost:6379/0', broker='redis://localhost:6379/0')
+from celery import shared_task
 
 
-@app.task
+@shared_task
 def add(x, y):
     time.sleep(5)
     return x + y
+
+
+@shared_task
+def check(cmd):
+    os.system(cmd)
+    time.sleep(10)
+    return True
