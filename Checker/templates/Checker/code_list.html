@@ -1,4 +1,94 @@
 {% extends 'Checker/header.html' %}
+{% block body_top %}
+    <div class="modal fade" id="view" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">添加代码</h4>
+                </div>
+                <div class="modal-body" id="view_body">
+                    <form action="" ENCTYPE="multipart/form-data" METHOD="POST">
+                        {% csrf_token %}
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                <h4><span class="glyphicon glyphicon-pencil"></span>&nbsp;添加代码
+                                </h4>
+                            </div>
+                            <div class="panel-body">
+                                <div id="alert-area">
+                                </div>
+                                <div class="form-group has-feedback col-sm-12">
+                                    <div class="input-group">
+                                        <div class="input-group-addon">文件</div>
+                                        <input type="file" name="file" required="required"
+                                               class="form-control" multiple="multiple">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <button style="width: 100%;" type="submit" class="btn btn-info ">上传
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="check_view" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">查重</h4>
+                </div>
+                <div class="modal-body" id="view_body">
+                    <form action="{% url 'Checker:check_start' pk=check_id %}" METHOD="POST">
+                        {% csrf_token %}
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                <h4><span class="glyphicon glyphicon-pencil"></span>&nbsp;查重
+                                </h4>
+                            </div>
+                            <div class="panel-body">
+                                <div id="alert-area">
+                                </div>
+                                <div class="form-group has-feedback col-sm-12">
+                                <div class="input-group">
+                                    <div class="input-group-addon">引擎</div>
+                                    <select name="check_type" class="form-control">
+                                        <option value="jplag" selected="selected">jplag</option>
+                                        <option value="moss">moss</option>
+                                    </select>
+                                </div>
+                            </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <button style="width: 100%;" type="submit" class="btn btn-info ">开始
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
 {% block body %}
     <style>
         .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
@@ -22,16 +112,16 @@
         <div class="page-bar span12 form-inline">
             <div class="pull-right main-bar">
                 <div class="btn-group btn-group-sm">
-                    <button type="button" class="btn btn-success btn-sm">添加代码
+                    <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#view">添加代码
                     </button>
                 </div>
                 <div class="btn-group btn-group-sm">
-                    <button type="button" class="btn btn-warning btn-sm">开始查重
+                    <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#check_view">开始查重
                     </button>
                 </div>
                 <div class="btn-group btn-group-sm">
-                    <button type="button" class="btn btn-danger btn-sm">查看结果
-                    </button>
+                    <a href="{% url 'Checker:check_result' pk=check_id %}"><button type="button" class="btn btn-danger btn-sm">查看结果
+                    </button></a>
                 </div>
             </div>
         </div>
@@ -40,6 +130,7 @@
             <tr>
                 <th>标题</th>
                 <th>创建时间</th>
+                <th>操作</th>
             </tr>
             </thead>
             <tbody class="vertical-middle">
@@ -47,9 +138,27 @@
                 <tr>
                     <td>{{ code.code.name }}</td>
                     <td>{{ code.c_time }}</td>
+                    <td>
+                        <button class="btn btn-info">查看</button>
+                        <button class="btn btn-danger" onclick="delete_code({{ check_id }}, {{ code.id }})">删除</button>
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
     </div>
+    <script>
+        $.ajaxSetup({
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}'}
+        });
+
+        function delete_code(id1, id2) {
+            if (!confirm('您确定要删除吗？'))
+                return;
+            $.post('/check/' + id1 + '/code/' + id2 + '/delete/', function (rst, state) {
+                if (state === 'success')
+                    location.reload();
+            })
+        }
+    </script>
 {% endblock %}

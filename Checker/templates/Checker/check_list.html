@@ -23,17 +23,39 @@
             <thead>
             <tr>
                 <th>标题</th>
+                <th>语言</th>
                 <th>创建时间</th>
+                <th>代码限制</th>
+                <th>操作</th>
             </tr>
             </thead>
             <tbody class="vertical-middle">
             {% for check in checks %}
                 <tr>
                     <td><a href="{% url 'Checker:code_list' pk=check.id %}">{{ check.title }}</a></td>
+                    <td>{{ check.get_language_display }}</td>
                     <td>{{ check.c_time }}</td>
+                    <td>{{ check.max_code_cnt }}</td>
+                    <td>
+                        <button class="btn btn-danger" onclick="delete_check({{ check.id }})">删除</button>
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
     </div>
+    <script>
+        $.ajaxSetup({
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}'}
+        });
+
+        function delete_check(id) {
+            if (!confirm('您确定要删除吗？'))
+                return;
+            $.post('/check/' + id + '/delete/', function (rst, state) {
+                if (state === 'success')
+                    location.reload();
+            })
+        }
+    </script>
 {% endblock %}

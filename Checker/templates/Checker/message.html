@@ -11,6 +11,9 @@
                     <div class="panel-body">
                         <div id="alert-area">
                             <h4 style="text-align: center;">{{ message }}</h4>
+                            {% if url %}
+                                <h4 style="text-align: center;">点击 <a href="{{ url }}">此处</a> 以继续</h4>
+                            {% endif %}
                         </div>
 
                     </div>
