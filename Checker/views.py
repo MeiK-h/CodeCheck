@@ -11,6 +11,7 @@ from .models import Bark, Code, access_type, UserInfo, make_cmd, Result
 from .forms import BarkForm
 
 import os
+import time
 import shutil
 
 
@@ -118,8 +119,10 @@ def check_start(request, pk):
     if result:
         return render(request, 'Checker/message.html',
                       {'message': '之前已经查重过，请在代码页面查看', 'url': '/check/%d/result/' % bark.id})
-    r = check.delay(make_cmd(bark.id, bark.language, percent, check_type))
-    result = Result(bark=bark, name=r.id)
+
+    this_time = str(int(time.time()))
+    r = check.delay(make_cmd(bark.id, this_time, bark.language, percent, check_type))
+    result = Result(bark=bark, name=r.id, rid=this_time)
     result.save()
 
     return render(request, 'Checker/message.html', {'message': '开始查重', 'url': '/check/%d/result/' % bark.id})
@@ -132,7 +135,7 @@ def check_result(request, pk):
     if result.get_state() is False:
         return render(request, 'Checker/message.html', {'message': '查重中……', 'url': '/check/%d/result/' % bark.id})
     return render(request, 'Checker/message.html',
-                  {'message': '查重结束，请点击查看', 'url': '/result/check_%d/index.html' % bark.id})
+                  {'message': '查重结束，请点击查看', 'url': '/result/%s/index.html' % result.rid})
 
 
 def login(request):

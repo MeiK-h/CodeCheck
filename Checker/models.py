@@ -48,18 +48,20 @@ class Code(models.Model):
 
 
 access_type = ['c', 'cpp', 'cc', 'java', 'py']
+moss_user_id = 987654321
 
 
 class Result(models.Model):
     bark = models.ForeignKey(Bark, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
+    rid = models.CharField(max_length=200)
 
     def get_state(self):
         result = AsyncResult(self.name)
         return result.ready()
 
 
-def make_cmd(bark_id, language, percent, check_type):
+def make_cmd(bark_id, result_dir, language, percent, check_type):
     cmd = None
     if check_type == 'jplag':
         if language == 'cpp':
@@ -69,7 +71,7 @@ def make_cmd(bark_id, language, percent, check_type):
         if language == 'py':
             language = 'python3'
         cmd = 'java -jar Checker/jplag.jar -l {0} -m {1} -r {2} -s {3}'.format(language, percent,
-                                                                               'Checker/result/check_%d' % bark_id,
+                                                                               'Checker/result/%s' % result_dir,
                                                                                'Checker/uploads/check_%d' % bark_id)
     elif check_type == 'moss':
         if language == 'cpp':
@@ -78,7 +80,8 @@ def make_cmd(bark_id, language, percent, check_type):
             language = 'java'
         if language == 'py':
             language = 'python'
-        cmd = 'python3 check_moss.py {0} {1} {2}'.format(language,
-                                                         'Checker/result/check_%d' % bark_id,
-                                                         'Checker/uploads/check_%d' % bark_id)
+        cmd = 'python3 Checker/check_moss.py {0} {1} {2} {3}'.format(language,
+                                                                     'Checker/result/%s/' % result_dir,
+                                                                     'Checker/uploads/check_%d' % bark_id,
+                                                                     moss_user_id)
     return cmd
