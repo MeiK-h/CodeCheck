@@ -55,6 +55,7 @@ class Result(models.Model):
     bark = models.ForeignKey(Bark, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
     rid = models.CharField(max_length=200)
+    ended = models.BooleanField(default=False)
 
     def get_state(self):
         result = AsyncResult(self.name)
