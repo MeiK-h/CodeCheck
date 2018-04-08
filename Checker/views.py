@@ -132,7 +132,7 @@ def check_start(request, pk):
 def check_result(request, pk):
     bark = Bark.objects.get(user=request.user, id=pk)
     result = Result.objects.get(bark=bark)
-    if result.get_state() is False or result.ended is False :
+    if result.get_state() is False and result.ended is False:
         return render(request, 'Checker/message.html', {'message': '查重中……', 'url': '/check/%d/result/' % bark.id})
     result.ended = True
     result.save()
